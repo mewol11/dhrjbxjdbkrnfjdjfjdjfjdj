@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>블록코딩 & 개발 로고 퀴즈</title>
+
+  <style>
+    body {
+      font-family: 'Malgun Gothic', sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      padding: 20px;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: rgba(255,255,255,0.9);
+      padding: 30px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 550px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .img-box {
+      width: 100%;
+      height: 220px;
+      background: #f8f8f8;
+      border-radius: 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+
+    img {
+      max-width: 80%;
+      max-height: 80%;
+      object-fit: contain;
+      display: none;
+    }
+
+    .choice-btn {
+      width: calc(50% - 10px);
+      margin: 5px;
+      padding: 12px;
+      font-size: 17px;
+      border-radius: 10px;
+      border: none;
+      background: white;
+      cursor: pointer;
+      transition: 0.2s;
+      font-weight: bold;
+    }
+
+    .choice-btn:hover {
+      transform: scale(1.05);
+      background: #f0f0f0;
+    }
+
+    .result {
+      font-size: 35px;
+      font-weight: bold;
+      margin-top: 20px;
+      min-height: 50px;
+    }
+
+    .correct {
+      color: #00c853;
+      animation: pop 0.5s infinite alternate;
+    }
+
+    .wrong {
+      color: #ff1744;
+      animation: shake 0.3s infinite;
+    }
+
+    #nextBtn {
+      padding: 14px 30px;
+      font-size: 20px;
+      border: none;
+      border-radius: 10px;
+      background: #4CAF50;
+      color: white;
+      cursor: pointer;
+      display: none;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    @keyframes pop {
+      from { transform: scale(1); }
+      to { transform: scale(1.08); }
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      100% { transform: translateX(-5px); }
+    }
+
+    @keyframes flashBg {
+      0% { background: #74ebd5; }
+      25% { background: gold; }
+      50% { background: hotpink; }
+      75% { background: cyan; }
+      100% { background: #74ebd5; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1 id="progress">문제 1 / 8</h1>
+
+  <div id="quiz-content">
+    <div class="img-box">
+      <img id="quizImage" alt="퀴즈 이미지">
+      <p id="loadingText">이미지 로딩 중...</p>
+    </div>
+    <div id="choices"></div>
+  </div>
+
+  <div id="result" class="result"></div>
+  <button id="nextBtn" onclick="handleNext()">다음 문제</button>
+</div>
+
+<script>
+const quizData = [
+  {
+    answer: '엔트리',
+    choices: ['엔트리','스크래치','코드.org','파이썬','로블록스'],
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmuZjfu5rRyeNfYXmmHrktmPBEm30cRV-hfTaPjZmv9w&s=10'
+  },
+  {
+    answer: '스크래치',
+    choices: ['스크래치','엔트리','마인크래프트','유니티','코드.org'],
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUoLl2DMqi7HZWVdmqSno8B3iiyveJrETU1cyOUFQv0g&s=10'
+  },
+  {
+    answer: 'VS코드',
+    choices: ['VS코드','금양이','파이참','이클립스','아톰'],
+    image: 'https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg'
+  },
+  {
+    answer: '파이썬',
+    choices: ['파이썬','자바','C++','스크래치','루비'],
+    image: 'https://blog.kakaocdn.net/dna/cn9zq6/btsaUkhGHdY/AAAAAAAAAAAAAAAAAAAAAHjjzE3p5XSwHaIJVgOl7eXyKNaOeHrd6f3w4BUehGlj/img.png?credential=yqXZFxpELC7KVnFOS48ylbz2pIh7yKj8&expires=1785509999&allow_ip=&allow_referer=&signature=Dq3JqGD9BK4luFSSY9hlq3xbJKk%3D'
+  },
+  {
+    answer: '마인크래프트',
+    choices: ['마인크래프트', '로블록스', '엔트리', '스크래치', '레고 스파이크'],
+    image: 'https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/logos/Homepage_Gameplay-Trailer_MC-OV-logo_300x300.png'
+  },
+  {
+    answer: '로블록스',
+    choices: ['로블록스', '마인크래프트', '유니티', '제페토', '코드.org'],
+    image: 'https://file.alphasquare.co.kr/media/images/stock_logo/us/RBLX.png'
+  },
+  {
+    answer: '코드.org',
+    choices: ['코드.org', '생활코딩', '스크래치', '엔트리', '앱인벤터'],
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Code.org_logo.svg/120px-Code.org_logo.svg.png'
+  },
+  {
+    answer: '정보올림피아드',
+    choices: ['정보올림피아드', '스크래치', '자바', '코틀린', '스위프트'],
+    image: 'https://i0.wp.com/blog-admin.gguge.com/wp-content/uploads/2023/05/%ED%95%9C%EA%B5%AD%EC%A0%95%EB%B3%B4%EC%98%AC%EB%A6%BC%ED%94%BC%EC%95%84%EB%93%9C_KOI%EB%A1%9C%EA%B3%A0.jpg?resize=317%2C270&ssl=1'
+  }
+];
+
+let currentIndex = 0;
+
+function shuffleArray(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function loadQuestion() {
+  if(currentIndex >= quizData.length) {
+    showFinalResult();
+    return;
+  }
+
+  const currentQuiz = quizData[currentIndex];
+  const img = document.getElementById('quizImage');
+  const loading = document.getElementById('loadingText');
+  const result = document.getElementById('result');
+  const nextBtn = document.getElementById('nextBtn');
+
+  result.textContent = '';
+  result.className = 'result';
+  nextBtn.style.display = 'none';
+  document.body.style.animation = ''; 
+
+  document.getElementById('progress').textContent =
+    `문제 ${currentIndex + 1} / ${quizData.length}`;
+
+  img.style.display = 'none';
+  loading.textContent = '이미지 로딩 중...';
+  loading.style.display = 'block';
+
+  img.src = currentQuiz.image;
+
+  img.onload = () => {
+    loading.style.display = 'none';
+    img.style.display = 'block';
+  };
+
+  img.onerror = () => {
+    loading.textContent = '이미지를 불러올 수 없습니다.';
+  };
+
+  const choicesDiv = document.getElementById('choices');
+  choicesDiv.innerHTML = '';
+  choicesDiv.style.pointerEvents = 'auto';
+
+  shuffleArray([...currentQuiz.choices]).forEach(choice => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = choice;
+    btn.onclick = () => checkAnswer(choice);
+    choicesDiv.appendChild(btn);
+  });
+}
+
+function checkAnswer(userAnswer) {
+  const currentQuiz = quizData[currentIndex];
+  const result = document.getElementById('result');
+  const nextBtn = document.getElementById('nextBtn');
+
+  document.getElementById('choices').style.pointerEvents = 'none';
+
+  if(userAnswer === currentQuiz.answer) {
+    result.textContent = '🎆 정답!!! 🎆';
+    result.className = 'result correct';
+
+    for(let i=0; i<80; i++) {
+      const effect = document.createElement('div');
+      effect.textContent = ['🎉','✨','🔥','🌟','💥'][Math.floor(Math.random()*5)];
+      effect.style.position = 'fixed';
+      effect.style.left = Math.random()*100 + 'vw';
+      effect.style.top = Math.random()*100 + 'vh';
+      effect.style.fontSize = (Math.random()*30 + 20) + 'px';
+      effect.style.zIndex = '9999';
+      effect.style.transition = '2s';
+      document.body.appendChild(effect);
+
+      setTimeout(() => {
+        effect.style.transform = `translateY(${Math.random()*400-200}px) rotate(${Math.random()*720}deg)`;
+        effect.style.opacity = '0';
+      }, 50);
+
+      setTimeout(() => effect.remove(), 2000);
+    }
+
+    document.body.style.animation = 'flashBg 0.3s 5';
+
+    if(currentIndex === quizData.length - 1) {
+      nextBtn.textContent = '결과 보기';
+    } else {
+      nextBtn.textContent = '다음 문제';
+    }
+    nextBtn.style.display = 'inline-block';
+
+  } else {
+    result.textContent = '🤣 이걸 틀리네 🤣';
+    result.className = 'result wrong';
+
+    setTimeout(() => {
+      document.body.style.animation = ''; 
+      currentIndex = 0;
+      loadQuestion();
+    }, 2000);
+  }
+}
+
+function handleNext() {
+  currentIndex++; 
+  loadQuestion();
+}
+
+function showFinalResult() {
+  document.getElementById('progress').textContent = '🏆 축하합니다! 통과! 🏆';
+  document.getElementById('quiz-content').style.display = 'none'; 
+  
+  const result = document.getElementById('result');
+  result.textContent = '모든 문제를 맞췄습니다!';
+  result.className = 'result correct';
+
+  const nextBtn = document.getElementById('nextBtn');
+  nextBtn.textContent = '다시하기';
+  nextBtn.style.display = 'inline-block';
+  nextBtn.onclick = () => {
+    document.getElementById('quiz-content').style.display = 'block';
+    nextBtn.onclick = handleNext; 
+    currentIndex = 0;
+    loadQuestion();
+  };
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
