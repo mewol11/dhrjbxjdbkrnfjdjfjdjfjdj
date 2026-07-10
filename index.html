@@ -4,12 +4,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>블록코딩 & 개발 로고 퀴즈</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
 
   <style>
+    :root {
+      --bg: #EEF1FB;
+      --card: #FFFFFF;
+      --ink: #202844;
+      --muted: #8992AC;
+      --primary: #3654F4;
+      --primary-dark: #2440D6;
+      --accent: #FFAA33;
+      --success: #04C990;
+      --danger: #FF5C77;
+      --track: #E3E7F7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Malgun Gothic', sans-serif;
+      font-family: 'Gowun Dodum', sans-serif;
+      color: var(--ink);
       text-align: center;
-      background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+      background:
+        radial-gradient(circle, #d7deF6 1.5px, transparent 1.5px) 0 0/22px 22px,
+        var(--bg);
       padding: 20px;
       margin: 0;
       min-height: 100vh;
@@ -19,24 +42,82 @@
     }
 
     .container {
-      background: rgba(255,255,255,0.9);
-      padding: 30px;
-      border-radius: 20px;
+      position: relative;
+      background: var(--card);
+      padding: 34px 30px 30px;
+      border-radius: 22px;
       width: 90%;
       max-width: 550px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      box-shadow: 0 20px 45px rgba(32, 40, 68, 0.16);
+      border: 1px solid #E4E8F7;
+    }
+
+    .eyebrow {
+      margin: 0 0 4px;
+      font-family: 'Jua', sans-serif;
+      letter-spacing: 0.14em;
+      font-size: 13px;
+      color: var(--primary);
+      text-transform: uppercase;
+    }
+
+    h1#progress {
+      font-family: 'Jua', sans-serif;
+      font-weight: normal;
+      font-size: 24px;
+      margin: 0 0 14px;
+      color: var(--ink);
+    }
+
+    .progress-track {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+
+    .progress-track .seg {
+      flex: 1;
+      max-width: 46px;
+      height: 8px;
+      border-radius: 5px;
+      background: var(--track);
+      transition: background 0.3s;
+    }
+
+    .progress-track .seg.filled {
+      background: var(--primary);
+    }
+
+    .progress-track .seg.current {
+      background: var(--accent);
     }
 
     .img-box {
+      position: relative;
       width: 100%;
       height: 220px;
-      background: #f8f8f8;
-      border-radius: 15px;
+      background: #F4F6FD;
+      border: 2px dashed #D3D9F2;
+      border-radius: 16px;
       display: flex;
       justify-content: center;
       align-items: center;
       overflow: hidden;
-      margin: 20px 0;
+      margin: 22px 0;
+    }
+
+    .img-box::before {
+      content: '';
+      position: absolute;
+      top: -11px;
+      left: 26px;
+      width: 26px;
+      height: 22px;
+      background: var(--card);
+      border: 2px dashed #D3D9F2;
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
     }
 
     img {
@@ -46,52 +127,105 @@
       display: none;
     }
 
+    #loadingText {
+      color: var(--muted);
+      font-size: 15px;
+      padding: 0 20px;
+    }
+
+    #loadingText.error {
+      color: var(--danger);
+      font-weight: bold;
+    }
+
+    .fallback-icon {
+      font-size: 50px;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    #choices {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
     .choice-btn {
+      position: relative;
+      box-sizing: border-box;
       width: calc(50% - 10px);
       margin: 5px;
-      padding: 12px;
-      font-size: 17px;
+      padding: 13px 16px 13px 30px;
+      font-family: 'Gowun Dodum', sans-serif;
+      font-size: 16px;
       border-radius: 10px;
-      border: none;
-      background: white;
+      border: 2px solid #E4E8F7;
+      background: var(--card);
+      color: var(--ink);
       cursor: pointer;
-      transition: 0.2s;
+      transition: 0.15s;
       font-weight: bold;
+      text-align: left;
+    }
+
+    .choice-btn::before {
+      content: '';
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+      opacity: 0.5;
     }
 
     .choice-btn:hover {
-      transform: scale(1.05);
-      background: #f0f0f0;
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: 0 6px 14px rgba(54, 84, 244, 0.18);
+    }
+
+    .choice-btn:hover::before {
+      opacity: 1;
     }
 
     .result {
-      font-size: 35px;
-      font-weight: bold;
-      margin-top: 20px;
-      min-height: 50px;
+      font-family: 'Jua', sans-serif;
+      font-size: 30px;
+      margin-top: 18px;
+      min-height: 46px;
     }
 
     .correct {
-      color: #00c853;
+      color: var(--success);
       animation: pop 0.5s infinite alternate;
     }
 
     .wrong {
-      color: #ff1744;
+      color: var(--danger);
       animation: shake 0.3s infinite;
     }
 
     #nextBtn {
-      padding: 14px 30px;
-      font-size: 20px;
+      padding: 13px 32px;
+      font-family: 'Jua', sans-serif;
+      font-size: 18px;
       border: none;
-      border-radius: 10px;
-      background: #4CAF50;
+      border-radius: 12px;
+      background: var(--primary);
       color: white;
       cursor: pointer;
       display: none;
-      margin-top: 20px;
-      font-weight: bold;
+      margin-top: 16px;
+      box-shadow: 0 8px 18px rgba(54, 84, 244, 0.3);
+      transition: 0.15s;
+    }
+
+    #nextBtn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
     }
 
     @keyframes pop {
@@ -106,18 +240,20 @@
     }
 
     @keyframes flashBg {
-      0% { background: #74ebd5; }
-      25% { background: gold; }
-      50% { background: hotpink; }
-      75% { background: cyan; }
-      100% { background: #74ebd5; }
+      0% { background-color: #74ebd5; }
+      25% { background-color: gold; }
+      50% { background-color: hotpink; }
+      75% { background-color: cyan; }
+      100% { background-color: #74ebd5; }
     }
   </style>
 </head>
 <body>
 
 <div class="container">
+  <p class="eyebrow">CODE LOGO QUIZ</p>
   <h1 id="progress">문제 1 / 8</h1>
+  <div class="progress-track" id="progressTrack"></div>
 
   <div id="quiz-content">
     <div class="img-box">
@@ -130,6 +266,7 @@
   <div id="result" class="result"></div>
   <button id="nextBtn" onclick="handleNext()">다음 문제</button>
 </div>
+
 
 <script>
 const quizData = [
@@ -156,7 +293,7 @@ const quizData = [
   {
     answer: '마인크래프트',
     choices: ['마인크래프트', '로블록스', '엔트리', '스크래치', '레고 스파이크'],
-    image: 'https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/logos/Homepage_Gameplay-Trailer_MC-OV-logo_300x300.png'
+    image: 'https://file.alphawiki.org/97/9718cbb7a80b4ccda40272eb0b1e2892f0ed0c54dcc00993ea49fa87d8bc6abc.svg'
   },
   {
     answer: '로블록스',
@@ -181,6 +318,18 @@ function shuffleArray(array) {
   return array.sort(() => Math.random() - 0.5);
 }
 
+function renderProgressTrack() {
+  const track = document.getElementById('progressTrack');
+  track.innerHTML = '';
+  quizData.forEach((_, i) => {
+    const seg = document.createElement('div');
+    seg.className = 'seg';
+    if (i < currentIndex) seg.classList.add('filled');
+    if (i === currentIndex) seg.classList.add('current');
+    track.appendChild(seg);
+  });
+}
+
 function loadQuestion() {
   if(currentIndex >= quizData.length) {
     showFinalResult();
@@ -201,7 +350,10 @@ function loadQuestion() {
   document.getElementById('progress').textContent =
     `문제 ${currentIndex + 1} / ${quizData.length}`;
 
+  renderProgressTrack();
+
   img.style.display = 'none';
+  loading.classList.remove('error');
   loading.textContent = '이미지 로딩 중...';
   loading.style.display = 'block';
 
@@ -213,7 +365,10 @@ function loadQuestion() {
   };
 
   img.onerror = () => {
-    loading.textContent = '이미지를 불러올 수 없습니다.';
+    loading.innerHTML = '<span class="fallback-icon">🖼️</span>이미지를 불러올 수 없습니다.<br>아래 보기 중에서 정답을 골라보세요!';
+    loading.classList.add('error');
+    loading.style.display = 'block';
+    img.style.display = 'none';
   };
 
   const choicesDiv = document.getElementById('choices');
@@ -288,6 +443,10 @@ function handleNext() {
 function showFinalResult() {
   document.getElementById('progress').textContent = '🏆 축하합니다! 통과! 🏆';
   document.getElementById('quiz-content').style.display = 'none'; 
+  document.querySelectorAll('#progressTrack .seg').forEach(seg => {
+    seg.classList.add('filled');
+    seg.classList.remove('current');
+  });
   
   const result = document.getElementById('result');
   result.textContent = '모든 문제를 맞췄습니다!';
@@ -308,4 +467,4 @@ loadQuestion();
 </script>
 
 </body>
-</html>
+  </html>
